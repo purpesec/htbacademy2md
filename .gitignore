@@ -2,3 +2,4 @@
 dist
 .ds_store
 htbacademy2md
+.env

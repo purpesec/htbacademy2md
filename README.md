@@ -29,6 +29,9 @@ htbacademy2md -m https://academy.hackthebox.com/module/112/section/1060 -c "htb_
 
 # Exportar en español con imágenes locales
 htbacademy2md -m https://academy.hackthebox.com/module/112/section/1060 -lang es -local_images -c "htb_academy_session=..."
+
+# Si ya tienes un .env configurado (ver más abajo), basta con la URL
+htbacademy2md -m https://academy.hackthebox.com/module/112/section/1060
 ```
 
 ### Idiomas soportados (`-lang`)
@@ -43,6 +46,31 @@ Sin `-lang`, se descarga el contenido original en inglés.
 3. Copia el valor de la cookie `htb_academy_session`.
 
 Puedes pasarla con `-c "htb_academy_session=VALOR"`; también puedes incluir otras cookies separadas por `;`.
+
+### Configuración con `.env` (opcional)
+
+Guarda tus cookies y valores por defecto en un archivo `.env` para no pasarlos en cada comando. Usa `.env.example` como plantilla:
+
+```bash
+cp .env.example .env
+# edita .env con tus valores
+```
+
+| Variable | Descripción | Equivale a |
+|---|---|---|
+| `HTB_COOKIES` | Cookies de autenticación | `-c` |
+| `HTB_LANG` | Idioma por defecto del contenido | `-lang` |
+| `HTB_LOCAL_IMAGES` | `true`/`false`: descargar imágenes localmente | `-local_images` |
+
+Ubicaciones buscadas (se usa el primero que exista):
+
+1. La ruta indicada con `-env RUTA`
+2. `./.env` (carpeta actual)
+3. `~/.config/htbacademy2md/.env` (configuración global del usuario)
+
+Los flags de la línea de comandos siempre tienen prioridad sobre el `.env`.
+
+> **Importante**: `.env` está en `.gitignore`, así que tus cookies nunca se subirán al repositorio.
 
 ## Notas
 
