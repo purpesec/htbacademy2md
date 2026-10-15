@@ -1,56 +1,58 @@
-# HackTheBox Academy to Markdown
-This is a simple CLI application that will fetch and convert a HackTheBox Academy module into a local file in Markdown format.
-This program will only grab one module at a time, and requires authenticating with the platform. 
-You will also need to have the module unlocked, which should go without saying.
+# htbacademy2md
 
-**Updated for HTB Academy 2.0** - This tool has been updated to work with the latest HTB Academy platform using the new API endpoints.
+Herramienta CLI en Go para exportar módulos de **HTB Academy** a Markdown, ideal para estudiar sin conexión o tomar notas en Obsidian u otro editor.
 
-I personally use [Obsidian](https://obsidian.md/) as my note-taking tool, and this application is tailored and tested for rendering markdown utilizing it.
-Most other note-taking tools that can import markdown files should work fine as well.
+## Características
 
-### Disclaimer
-**Please note that this application is not intended for use in uploading or sharing the end result content.**
-The application is solely designed for personal use and any content created using this application should not be shared or uploaded to any platform without proper authorization and consent from HackTheBox.
-The contributors of this application are not responsible for any unauthorized use or distribution of the content created using this application.
+- Exporta un módulo completo (todas sus secciones) a un único archivo `.md`.
+- **Soporte multi-idioma**: descarga el contenido traducido por la IA de HTB Academy (`-lang es`, `fr`, `ja`, ...).
+- Opción de descargar las imágenes localmente (`-local_images`) o dejarlas referenciadas por URL.
+- Autenticación mediante cookie de sesión (`htb_academy_session`), sin necesidad de contraseña ni 2FA.
 
-### Installing
-Check the releases folder [here](https://github.com/Tut-k0/htb-academy-to-md/releases), and download the most recent executable for your operating system.
-All the executables listed here are for x64 and amd64. If there is not an executable for your OS or architecture, you can simply build the application. (See building section below.)
+## Compilar
 
-### Running
-This application uses session cookie authentication rather than email/password login. This approach is necessary because:
-- HTB Academy can implement reCAPTCHA on login forms
-- Two-factor authentication (2FA) may be required for accounts
-
-Since automating reCAPTCHA and 2FA programmatically is not feasible, the session cookie method provides a simple workaround.
-Simply log into HTB Academy manually (as you normally would to access modules), extract your session cookie from your browser, and pass it to the application.
-
-You can extract cookies using browser developer tools (F12 → Application/Storage → Cookies), Burp Suite, or a browser extension.
-The session cookie you need is `htb_academy_session`.
+Requiere Go 1.25 o superior.
 
 ```bash
-# Get the help menu displayed
-htb-academy-to-md -h
-
-# Feed the URL to the module.
-htb-academy-to-md -m https://academy.hackthebox.com/module/112/section/1060 -c "htb_academy_session=value"
-
-# Save images in module locally.
-htb-academy-to-md -m https://academy.hackthebox.com/module/112/section/1060 -local_images -c "htb_academy_session=value"
-
-# You can also grab multiple modules using a simple loop if preferred. (bash example)
-for i in $(cat modules.txt);do htb-academy-to-md -m $i -c "htb_academy_session=value";done
+cd src
+go build -o htbacademy2md
 ```
 
-### Building
+## Uso
+
 ```bash
-# Run from inside the /src folder.
-go build -o htb-academy-to-md
+# Mostrar la ayuda
+htbacademy2md -h
+
+# Exportar un módulo (contenido original en inglés, imágenes por URL)
+htbacademy2md -m https://academy.hackthebox.com/module/112/section/1060 -c "htb_academy_session=..."
+
+# Exportar en español con imágenes locales
+htbacademy2md -m https://academy.hackthebox.com/module/112/section/1060 -lang es -local_images -c "htb_academy_session=..."
 ```
 
-### Contributing
-Pull requests are always welcome.
+### Idiomas soportados (`-lang`)
 
-#### Contributors
-- [Tut-k0](https://github.com/Tut-k0): Original Author
-- [Robertguarneros](https://github.com/Robertguarneros): Added support for HTB Academy 2.0
+HTB Academy ofrece traducción automática (IA) del contenido a: `hi`, `ar`, `es`, `fr`, `zh` (simplificado, HK y TW), `el`, `ja`.
+Sin `-lang`, se descarga el contenido original en inglés.
+
+### Obtener la cookie
+
+1. Inicia sesión en [HTB Academy](https://academy.hackthebox.com) en tu navegador.
+2. Abre las DevTools (F12) → Application/Storage → Cookies → `academy.hackthebox.com`.
+3. Copia el valor de la cookie `htb_academy_session`.
+
+Puedes pasarla con `-c "htb_academy_session=VALOR"`; también puedes incluir otras cookies separadas por `;`.
+
+## Notas
+
+- Pensada para uso personal: descarga únicamente módulos a los que tengas acceso y no compartas el contenido sin autorización de HackTheBox.
+- Los títulos de módulo y secciones que devuelve la API de HTB permanecen en inglés; el contenido de las secciones sí llega traducido.
+
+## Créditos
+
+Basado en [htb-academy-to-md](https://github.com/Tut-k0/htb-academy-to-md) de [Tut-k0](https://github.com/Tut-k0) y contribuidores. Esta versión añade el flag `-lang` para descargar el contenido traducido.
+
+## Licencia
+
+[MIT](LICENSE)

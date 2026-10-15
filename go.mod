@@ -1,4 +1,4 @@
-module htb-academy-md
+module github.com/purpesec/htbacademy2md
 
 go 1.25.0
 
