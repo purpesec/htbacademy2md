@@ -51,7 +51,7 @@ Puedes pasarla con `-c "htb_academy_session=VALOR"`; también puedes incluir otr
 
 ## Créditos
 
-Basado en [htb-academy-to-md](https://github.com/Tut-k0/htb-academy-to-md) de [Tut-k0](https://github.com/Tut-k0) y contribuidores. Esta versión añade el flag `-lang` para descargar el contenido traducido.
+Basado en [htb-academy-to-md](https://github.com/Tut-k0/htb-academy-to-md).
 
 ## Licencia
 
