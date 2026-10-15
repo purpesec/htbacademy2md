@@ -130,7 +130,7 @@ func addCookiesToJar(jar *cookiejar.Jar, cookies string) {
 	jar.SetCookies(u, cookieList)
 }
 
-func getModule(moduleUrl string, client *http.Client) (string, []string) {
+func getModule(moduleUrl string, client *http.Client, lang string) (string, []string) {
 	// Extract module ID from URL (e.g., https://academy.hackthebox.com/module/163/section/1546)
 	moduleID := extractModuleID(moduleUrl)
 
@@ -138,19 +138,28 @@ func getModule(moduleUrl string, client *http.Client) (string, []string) {
 	refererUrl := normalizeModuleUrl(moduleUrl)
 
 	// Fetch module metadata to get the title
-	moduleTitle := getModuleMetadata(moduleID, refererUrl, client)
+	moduleTitle := getModuleMetadata(moduleID, refererUrl, client, lang)
 
 	// Fetch all sections for this module
-	sections := getModuleSections(moduleID, refererUrl, client)
+	sections := getModuleSections(moduleID, refererUrl, client, lang)
 
 	// Fetch content for each section
 	var pagesContent []string
 	for _, section := range sections {
-		content := getSectionContent(moduleID, section.ID, refererUrl, client)
+		content := getSectionContent(moduleID, section.ID, refererUrl, client, lang)
 		pagesContent = append(pagesContent, content)
 	}
 
 	return moduleTitle, pagesContent
+}
+
+// withLanguage appends the language query parameter used by HTB Academy's
+// on-the-fly translation feature to an API URL. Empty lang keeps the original URL.
+func withLanguage(apiUrl string, lang string) string {
+	if lang == "" {
+		return apiUrl
+	}
+	return apiUrl + "?language=" + url.QueryEscape(lang)
 }
 
 func extractModuleID(moduleUrl string) string {
@@ -177,8 +186,8 @@ func normalizeModuleUrl(moduleUrl string) string {
 	return strings.Replace(moduleUrl, "/module/", "/app/module/", 1)
 }
 
-func getModuleMetadata(moduleID string, refererUrl string, client *http.Client) string {
-	apiUrl := fmt.Sprintf(academyBase+"/api/v2/modules/%s", moduleID)
+func getModuleMetadata(moduleID string, refererUrl string, client *http.Client, lang string) string {
+	apiUrl := withLanguage(fmt.Sprintf(academyBase+"/api/v2/modules/%s", moduleID), lang)
 
 	req, err := http.NewRequest("GET", apiUrl, nil)
 	if err != nil {
@@ -220,8 +229,8 @@ func getModuleMetadata(moduleID string, refererUrl string, client *http.Client) 
 	return title
 }
 
-func getModuleSections(moduleID string, refererUrl string, client *http.Client) []Section {
-	apiUrl := fmt.Sprintf(academyBase+"/api/v3/modules/%s/sections", moduleID)
+func getModuleSections(moduleID string, refererUrl string, client *http.Client, lang string) []Section {
+	apiUrl := withLanguage(fmt.Sprintf(academyBase+"/api/v3/modules/%s/sections", moduleID), lang)
 
 	req, err := http.NewRequest("GET", apiUrl, nil)
 	if err != nil {
@@ -271,8 +280,8 @@ func getModuleSections(moduleID string, refererUrl string, client *http.Client) 
 	return allSections
 }
 
-func getSectionContent(moduleID string, sectionID int, refererUrl string, client *http.Client) string {
-	apiUrl := fmt.Sprintf(academyBase+"/api/v2/modules/%s/sections/%d", moduleID, sectionID)
+func getSectionContent(moduleID string, sectionID int, refererUrl string, client *http.Client, lang string) string {
+	apiUrl := withLanguage(fmt.Sprintf(academyBase+"/api/v2/modules/%s/sections/%d", moduleID, sectionID), lang)
 
 	req, err := http.NewRequest("GET", apiUrl, nil)
 	if err != nil {

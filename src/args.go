@@ -9,17 +9,20 @@ import (
 type Args struct {
 	moduleUrl   string
 	cookies     string
+	lang        string
 	localImages bool
 }
 
 func getArguments() Args {
 	var mFlag = flag.String("m", "", "(REQUIRED) Academy Module URL to the first page.")
 	var cFlag = flag.String("c", "", "(REQUIRED) Academy Cookies for authorization.")
+	var langFlag = flag.String("lang", "", "Language code for translated content (e.g. es, fr, de, ja). Empty = original English content.")
 	var imgFlag = flag.Bool("local_images", false, "Save images locally rather than referencing the URL location.")
 	flag.Parse()
 	arg := Args{
 		moduleUrl:   *mFlag,
 		cookies:     *cFlag,
+		lang:        *langFlag,
 		localImages: *imgFlag,
 	}
 

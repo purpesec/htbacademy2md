@@ -11,7 +11,7 @@ func main() {
 	fmt.Println("Authenticating with HackTheBox...")
 	session := authenticateWithCookies(options.cookies)
 	fmt.Println("Downloading requested module...")
-	title, content := getModule(options.moduleUrl, session)
+	title, content := getModule(options.moduleUrl, session, options.lang)
 
 	// Extract module ID for image folder naming
 	moduleID := extractModuleID(options.moduleUrl)
